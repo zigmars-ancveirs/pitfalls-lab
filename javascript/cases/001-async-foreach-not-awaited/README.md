@@ -1,22 +1,29 @@
-# 001 — `forEach(async ...)` is not awaited (silent concurrency bug)
+# 001 — `forEach(async ...)` is not awaited (plus order + errors + concurrency)
 
 ## Pitfall
-Using `array.forEach(async (x) => ...)` and assuming it awaits.
-`forEach` does not wait for promises → code continues early, results are incomplete, errors can be unhandled.
+`array.forEach(async () => ...)` does not await the async callbacks.
+This causes:
+- the parent function to return early
+- errors to escape your try/catch
+- nondeterministic ordering when you push into shared arrays
+- accidental unlimited parallelism (stampede)
 
 ## Symptoms
-- Function returns before work is done
-- Empty/partial results
-- Flaky tests
-- Unhandled promise rejections
+- partial/empty results
+- flaky tests
+- unhandled promise rejections
+- downstream rate limits / bursts
 
 ## Root cause
-`forEach` ignores returned promises. Awaiting inside the callback does not make the outer function wait.
+`forEach` ignores returned Promises. Awaiting inside the callback does not make the outer scope wait.
 
-## Fix (patterns)
-- `await Promise.all(items.map(async ...))` for parallel work
-- `for...of` + `await` for sequential work
+## Fix patterns
+- Parallel (bounded): `map` + `Promise.all` (+ concurrency limit)
+- Sequential: `for...of` + `await`
+- Deterministic order: return values from `map`, don’t `push`
+- Cancellation: pass `AbortSignal` / check it between awaits
 
 ## Prevention
-- ESLint rule: `no-async-promise-executor` + custom rule or code review guideline
-- Prefer helper utilities: `mapAsync`, `eachAsync`
+- Code review rule: "no forEach(async...)"
+- ESLint: ban `forEach` with async callback (custom rule) or enforce `no-floating-promises` in TS projects
+- Load tests: verify no stampede (limit concurrency)
