@@ -1,0 +1,3 @@
+- Boundary validation is the sweet spot: strict at ingress/egress, simpler inside.
+- Prefer `unknown` for untrusted data to force validation/narrowing.
+- If you need speed: validate only at boundaries + cache validated objects.
