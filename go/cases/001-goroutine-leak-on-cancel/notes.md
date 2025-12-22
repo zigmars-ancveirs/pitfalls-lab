@@ -1,0 +1,3 @@
+- In real services, prefer `errgroup.WithContext(ctx)` to manage goroutines and propagate cancel.
+- Buffering alone is not sufficient; it only delays the blockage.
+- If producers must always deliver results, ensure the consumer drains or use a dedicated fan-in that drains until producers exit.
