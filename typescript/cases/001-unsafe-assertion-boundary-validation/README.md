@@ -1,24 +1,18 @@
-# 001 — Unsafe type assertions at IO boundaries (types lie at runtime)
+# 001 — Unsafe assertions at IO boundaries (runtime validation + strictness)
 
 ## Pitfall
-Using `as SomeType` (or trusting `any`) on untrusted input (JSON, API responses, env, user data).
-TypeScript only checks types at compile time. At runtime, the data can be wrong → crashes or logic bugs.
+Using `as T` (or trusting `any`) at IO boundaries makes TypeScript types lie at runtime.
+Two common failure modes:
+1) wrong types → runtime crashes
+2) unexpected extra fields → silent acceptance (security/logic drift)
 
-## Symptoms
-- “Works in TS”, crashes in production (e.g., `x.toLowerCase is not a function`)
-- Security or logic issues when fields are missing/malformed
-- Hard-to-debug bugs because types look “correct”
-
-## Root cause
-TypeScript does not validate runtime values. `JSON.parse` returns `any`.
-`as T` is a blind cast, not a conversion/validation.
-
-## Fix (pattern)
-- Use runtime validation at the boundary (e.g., Zod)
-- Keep strict typing inside the system, but validate inputs at ingress
-- Prefer `unknown` over `any` for untrusted data
+## Fix
+- Parse as `unknown`
+- Validate with a runtime schema (Zod)
+- Use `.strict()` to reject unknown keys (when appropriate)
+- Keep strong typing inside, but enforce contracts at ingress/egress
 
 ## Prevention
-- ESLint: ban/limit `any` and unsafe assertions at boundaries
-- Wrapper functions for IO parsing/validation
-- Contract tests for API clients (sample payloads)
+- `strict` TS config, avoid `any`
+- boundary helper functions (single entrypoint for parsing)
+- contract tests with real payload samples
