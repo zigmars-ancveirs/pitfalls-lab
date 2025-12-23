@@ -1,0 +1,2 @@
+- Avoid `late` for domain data unless you can prove init ordering.
+- If you need lazy init, encapsulate initialization behind a getter and enforce invariants.
