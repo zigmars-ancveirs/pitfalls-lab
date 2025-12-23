@@ -1,0 +1,2 @@
+- Validate at boundaries. Keep the rest of the code strongly typed.
+- For larger models: use `freezed` + `json_serializable` with strict decoding rules.
