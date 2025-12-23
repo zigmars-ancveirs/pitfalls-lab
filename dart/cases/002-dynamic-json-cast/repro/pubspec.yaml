@@ -1,0 +1,6 @@
+name: dynamic_json_repro
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dev_dependencies:
+  test: ^1.25.0
