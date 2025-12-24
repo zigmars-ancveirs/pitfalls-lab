@@ -1,5 +1,5 @@
-{
-  "singleQuote": true,
-  "semi": true,
-  "printWidth": 80
+function hello(name) {
+  console.log('hi', name);
 }
+
+hello('world');
