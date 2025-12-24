@@ -1,0 +1,11 @@
+{
+  "name": "ide-prettier-drift-repro",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  }
+}
