@@ -1,0 +1,2 @@
+- ORMs can hide N+1 behind lazy-loaded relations.
+- JOIN may explode row counts; sometimes IN() + grouping is better with pagination.
